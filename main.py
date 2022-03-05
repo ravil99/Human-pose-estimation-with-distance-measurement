@@ -3,10 +3,10 @@ import yaml
 import time
 import tensorflow as tf
 
-from depth_estimator import DepthEstimator
-from custom_video_capture import CustomVideoCapture
-from aruco_detector.aruco_detector import findArucoMarkers, arucoIndex
-from pose_estimator import PoseEstimator
+from modules.depth_estimator import DepthEstimator
+from utils.custom_video_capture import CustomVideoCapture
+from modules.aruco_detector.aruco_detector import findArucoMarkers, arucoIndex
+from modules.pose_estimator import PoseEstimator
 
 with open("config.yaml") as file:
     config = yaml.full_load(file)
