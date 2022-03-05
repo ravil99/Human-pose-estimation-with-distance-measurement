@@ -13,3 +13,6 @@ spacepy
 einops
 yacs 
 PyYAML
+timm
+mayavi
+pyqt5

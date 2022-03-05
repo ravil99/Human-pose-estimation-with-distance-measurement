@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 import yaml
 import time
-import torch
+
+from depth_estimator import DepthEstimator
 from custom_video_capture import CustomVideoCapture
 from aruco_detector.aruco_detector import findArucoMarkers, arucoIndex
 
@@ -10,7 +11,9 @@ with open("config.yaml") as file:
     config = yaml.full_load(file)
 
 cap = CustomVideoCapture(0)
+depth_estimator = DepthEstimator()
 time.sleep(2)
+
 frame_number = 0
 tic = 0
 while True:
@@ -20,7 +23,10 @@ while True:
         print("FPS: {}".format(fps))
 
     ret, frame = cap.read()
+    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
     arucoFound = findArucoMarkers(frame, frame_number)
+    output, scaled_output = depth_estimator.predict(rgb_frame)
 
 
 
@@ -30,6 +36,7 @@ while True:
             frame = arucoIndex(bbox, id, frame)
 
     cv2.imshow("Frame", frame)
+    cv2.imshow("Depth estimation", scaled_output)
     
     key = cv2.waitKey(1)
     if not ret or key == ord('q'):
