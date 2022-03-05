@@ -1,0 +1,20 @@
+YOLOv4: True
+BRIEFChecker: True
+BrightnessChecker: True
+VideoRecording: True
+AudioPlayer: True
+RelayController: True
+print_fps: True
+
+SOURCES:
+ First: 'rtsp://admin:hik75Vision@192.168.0.75:554/media/video2'
+ Second: 'rtsp://admin:hik76Vision@192.168.0.76:554/media/video2'
+ Third: 'rtsp://admin:hik77Vision@192.168.0.77:554/media/video2'
+ Fourth: 'rtsp://admin:hik78Vision@192.168.0.78:554/media/video2'
+
+OPTIONS:
+  frame_width: 640
+  frame_height: 360
+  verbose: 1
+  print_fps: True
+  oneshot_yolo: True

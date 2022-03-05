@@ -1,0 +1,15 @@
+opencv-python==4.1.2.30
+opencv-contrib-python==4.1.2.30
+wheel
+tensorflow
+tensorflow-addons
+attrdict
+importlib_resources
+jpeg4py
+imageio-ffmpeg
+transforms3d
+more_itertools
+spacepy
+einops
+yacs 
+PyYAML
