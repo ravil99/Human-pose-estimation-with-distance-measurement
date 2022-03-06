@@ -1,10 +1,12 @@
 print_fps: True
 
 pose_estimation: 
-  enable: True
+  enable: False
   poseviz: False
   draw_2d: True
 
 depth_estimation:
-  enable: True
+  enable: False
   show_depth_window: True
+
+aruco_size: 0.038

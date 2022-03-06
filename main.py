@@ -2,6 +2,7 @@ import cv2
 import yaml
 import time
 import tensorflow as tf
+import numpy as np
 
 from modules.depth_estimator import DepthEstimator
 from utils.custom_video_capture import CustomVideoCapture
@@ -19,6 +20,7 @@ if config["depth_estimation"]["enable"]:
 if config["pose_estimation"]["enable"]:
     pose_estimator = PoseEstimator(use_poseviz=config["pose_estimation"]["poseviz"])
 
+time.sleep(2)
 frame_number = 0
 tic = 0
 while True:
@@ -31,7 +33,7 @@ while True:
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     # Find aruco markers
-    arucoFound = findArucoMarkers(frame, frame_number)
+    arucoFound = findArucoMarkers(frame, frame_number, config['aruco_size'])
 
     # Estimate depth
     if config["depth_estimation"]["enable"]:
@@ -46,16 +48,26 @@ while True:
         chest_points = pose_estimator.get_chest(pred_poses)
         for human_point in chest_points:
             frame = cv2.circle(frame, human_point, radius=8, color=(0, 0, 255), thickness=-1)
-        
+
+
+    # if len(arucoFound[0]) != 0:
+    #     print("shape", arucoFound[0][0][0].shape)
+    # if config["pose_estimation"]["enable"] and config["depth_estimation"]["enable"]:
+    #     if len(arucoFound[0]) != 0:
+    #         bbox = arucoFound[0][0][0]
+    #         aruco_point = np.mean(arucoFound[0][0][0], 0)
 
     #Draw Aruco
     if len(arucoFound[0]) != 0:
-        for bbox, id in zip(arucoFound[0], arucoFound[1]):
+        for i, (bbox, id, aruco_dist) in enumerate(zip(arucoFound[0], arucoFound[1], arucoFound[2])):
             frame = arucoIndex(bbox, id, frame)
+            print("id", id[0])
+            cv2.putText(frame, "Dist to aruco {}: {:.2f}".format(id[0], aruco_dist), (10, int((i+1)*20)), cv2.FONT_HERSHEY_PLAIN, 1.5, 
+                        (255, 0, 255), 2)
 
     cv2.imshow("Frame", frame)
 
-    if config["depth_estimation"]["show_depth_window"]:
+    if config["depth_estimation"]["enable"] and config["depth_estimation"]["show_depth_window"]:
         cv2.imshow("Depth estimation", scaled_disparity_map)
     
     key = cv2.waitKey(1)
