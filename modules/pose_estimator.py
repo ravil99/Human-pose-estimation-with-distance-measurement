@@ -65,11 +65,20 @@ class PoseEstimator:
         return image
 
     def get_chest(self, pred):
-        chest_points = []
+        chest_points_2d = []
         for human in range(len(pred['poses2d'])):
             lsho = pred['poses2d'][human][self.lsho_ind].numpy()
             rsho = pred['poses2d'][human][self.rsho_ind].numpy()
             chest = (lsho + rsho)/2
             chest = (round(chest[0]), round(chest[1]))
-            chest_points.append(chest)
-        return chest_points
+            chest_points_2d.append(chest)
+
+        chest_points_3d = []
+        for human in range(len(pred['poses3d'])):
+            lsho = pred['poses3d'][human][self.lsho_ind].numpy()
+            rsho = pred['poses3d'][human][self.rsho_ind].numpy()
+            chest = (lsho + rsho)/2
+            chest = (round(chest[0]), round(chest[1]), round(chest[2]))
+            chest_points_3d.append(chest)
+
+        return chest_points_2d, chest_points_3d
