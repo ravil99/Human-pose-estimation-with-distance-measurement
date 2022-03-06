@@ -2,7 +2,8 @@ print_fps: True
 
 pose_estimation: 
   enable: True
-  poseviz: True
+  poseviz: False
+  draw_2d: True
 
 depth_estimation:
   enable: True

@@ -12,8 +12,12 @@ with open("config.yaml") as file:
     config = yaml.full_load(file)
 
 cap = CustomVideoCapture(0)
-depth_estimator = DepthEstimator()
-pose_estimator = PoseEstimator(use_poseviz=config["pose_estimation"]["poseviz"])
+
+if config["depth_estimation"]["enable"]:
+    depth_estimator = DepthEstimator()
+
+if config["pose_estimation"]["enable"]:
+    pose_estimator = PoseEstimator(use_poseviz=config["pose_estimation"]["poseviz"])
 
 frame_number = 0
 tic = 0
@@ -36,8 +40,13 @@ while True:
     # Pose estimation
     if config["pose_estimation"]["enable"]:
         pred_poses = pose_estimator.predict(rgb_frame)
+        if config["pose_estimation"]["draw_2d"]:
+            frame = pose_estimator.draw2D(pred_poses, frame)
 
-    
+        chest_points = pose_estimator.get_chest(pred_poses)
+        for human_point in chest_points:
+            frame = cv2.circle(frame, human_point, radius=8, color=(0, 0, 255), thickness=-1)
+        
 
     #Draw Aruco
     if len(arucoFound[0]) != 0:
