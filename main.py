@@ -50,18 +50,29 @@ while True:
             frame = cv2.circle(frame, human_point, radius=8, color=(0, 0, 255), thickness=-1)
 
 
-    # if len(arucoFound[0]) != 0:
-    #     print("shape", arucoFound[0][0][0].shape)
-    # if config["pose_estimation"]["enable"] and config["depth_estimation"]["enable"]:
-    #     if len(arucoFound[0]) != 0:
-    #         bbox = arucoFound[0][0][0]
-    #         aruco_point = np.mean(arucoFound[0][0][0], 0)
+
+    if config["pose_estimation"]["enable"] and config["depth_estimation"]["enable"]:
+        if len(arucoFound[0]) != 0:
+            bbox = arucoFound[0][0][0]
+            aruco_dist = arucoFound[2][0]
+            aruco_point = np.mean(arucoFound[0][0][0], 0)
+            aruco_point = (round(aruco_point[0]), round(aruco_point[1]))
+            depth_aruco = disparity_map[aruco_point[1], aruco_point[0]]
+
+            for i, human_point in enumerate(chest_points):
+                print("human point", human_point)
+                human_point_x = min(frame.shape[1] - 1, max(0, human_point[0]))
+                human_point_y = min(frame.shape[0] - 1, max(0, human_point[1]))
+                depth_human = disparity_map[human_point_y, human_point_x]
+                human_dist = aruco_dist * depth_human / depth_aruco
+                cv2.putText(frame, "Dist to human {}: {:.2f}".format(i, human_dist), (frame.shape[1] - 300, int((i+1)*20)), cv2.FONT_HERSHEY_PLAIN, 1.5, 
+                            (255, 255, 0), 2)
+
 
     #Draw Aruco
     if len(arucoFound[0]) != 0:
         for i, (bbox, id, aruco_dist) in enumerate(zip(arucoFound[0], arucoFound[1], arucoFound[2])):
             frame = arucoIndex(bbox, id, frame)
-            print("id", id[0])
             cv2.putText(frame, "Dist to aruco {}: {:.2f}".format(id[0], aruco_dist), (10, int((i+1)*20)), cv2.FONT_HERSHEY_PLAIN, 1.5, 
                         (255, 0, 255), 2)
 
