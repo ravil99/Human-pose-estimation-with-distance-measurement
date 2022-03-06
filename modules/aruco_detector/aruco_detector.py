@@ -74,6 +74,7 @@ def findArucoMarkers(img, frame_number, aruco_marker_side_length, markerSize = 6
     arucoParam = aruco.DetectorParameters_create()
     bbox, ids, rejected = aruco.detectMarkers(imgGray, arucoDict, parameters = arucoParam, cameraMatrix=mtx, distCoeff=dst)
     aruco_dists = []
+    xyz = []
 
     if draw and ids is not None:
         aruco.drawDetectedMarkers(img, bbox)
@@ -89,6 +90,7 @@ def findArucoMarkers(img, frame_number, aruco_marker_side_length, markerSize = 6
             transform_translation_y = tvecs[i][0][1]
             transform_translation_z = tvecs[i][0][2]
             aruco_dist =  (transform_translation_x**2 + transform_translation_y**2 + transform_translation_z**2)**(0.5)
+            xyz.append([transform_translation_x, transform_translation_y, transform_translation_z])
             aruco_dists.append(aruco_dist)
 
             # Store the rotation information
@@ -126,7 +128,7 @@ def findArucoMarkers(img, frame_number, aruco_marker_side_length, markerSize = 6
             # Draw the axes on the marker
             cv2.aruco.drawAxis(img, mtx, dst, rvecs[i], tvecs[i], 0.05)
 
-    return [bbox, ids, aruco_dists]
+    return [bbox, ids, aruco_dists, xyz]
 
 def arucoIndex(bbox, id, img, drawID = True):
 
