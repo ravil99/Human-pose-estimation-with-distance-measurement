@@ -7,7 +7,7 @@ import numpy as np
 from utils.vector_math import angle_between, distance_beetween2objects
 from utils.custom_video_capture import CustomVideoCapture
 from modules.depth_estimator import DepthEstimator
-from modules.aruco_detector.aruco_detector import findArucoMarkers, arucoIndex
+from modules.aruco_detector.aruco_detector import findArucoMarkers, arucoIndex, drawArUco
 from modules.pose_estimator import PoseEstimator
 
 with open("config.yaml") as file:
@@ -35,7 +35,7 @@ while True:
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     # Find aruco markers
-    arucoFound = findArucoMarkers(frame, frame_number, config['aruco_size'])
+    arucoFound, vectors = findArucoMarkers(frame, frame_number, config['aruco_size'])
     aruco_dists = arucoFound[2]
 
     # Estimate depth
@@ -100,6 +100,8 @@ while True:
     # Draw Aruco
     if len(arucoFound[0]) != 0:
         for i, (bbox, id, aruco_dist) in enumerate(zip(arucoFound[0], arucoFound[1], arucoFound[2])):
+            
+            drawArUco(frame, arucoFound, vectors)
             frame = arucoIndex(bbox, id, frame)
             cv2.putText(frame, "Dist to aruco {}: {:.2f}".format(id[0], aruco_dist), (10, int((i+1)*20)), cv2.FONT_HERSHEY_PLAIN, 1.5,
                         (255, 0, 0), 2)

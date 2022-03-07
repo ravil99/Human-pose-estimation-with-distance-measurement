@@ -1,15 +1,13 @@
-from __future__ import print_function 
 import cv2 
-import numpy as np #
+import numpy as np 
 import glob 
- 
 
 # Chessboard dimensions
 number_of_squares_X = 10 
 number_of_squares_Y = 8 
 nX = number_of_squares_X - 1 # Number of interior corners along x-axis
 nY = number_of_squares_Y - 1 # Number of interior corners along y-axis
-square_size = 0.020 # Size, in meters, of a square side 
+square_size = 0.016 # Size, in meters, of a square side 
   
 # Set termination criteria. We stop either when an accuracy is reached or when
 # we have finished a certain number of iterations.
@@ -26,9 +24,22 @@ object_points = []
 image_points = []
   
 def main():
-      
-  # PLEASE, WRITE A VALID FILE FOR CALIBRATION DATASET
-  images = glob.glob('Calibration_dataset/*.jpg')
+
+  capture = cv2.VideoCapture(0)
+    
+  for i in range(300):
+    ret, img = capture.read()
+    cv2.imshow('Calibration', img)
+    cv2.imwrite(f'Calibration_dataset/frame_{i}.png', img)
+    i+=1
+    if cv2.waitKey(20) & 0xFF==ord('d'):
+        break
+
+  capture.release()
+  cv2.destroyAllWindows
+
+  # Get the file path for images in the current directory
+  images = glob.glob('Calibration_dataset/*.png')
       
   # Go through each chessboard image, one by one
   for image_file in images:
@@ -56,8 +67,12 @@ def main():
                                                     gray.shape[::-1], 
                                                     None, 
                                                     None)
+
+  # Saving .npy to a zip
+  np.savez('Parameters', matrix=mtx, distortion=dist,
+         rotation=rvecs, translation=tvecs)
  
-  # Save parameters to a file
+  # Save parameters to a YAML file
   cv_file = cv2.FileStorage('calibration_chessboard.yaml', cv2.FILE_STORAGE_WRITE)
   cv_file.write('K', mtx)
   cv_file.write('D', dist)
