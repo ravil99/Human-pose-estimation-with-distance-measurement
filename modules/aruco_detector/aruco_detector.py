@@ -25,6 +25,9 @@ logging.basicConfig(filename = "logfile.log",
 logger = logging.getLogger()
 cur_dir = os.path.dirname(os.path.realpath(__file__))
 
+# Please, write the size of the marker here:
+aruco_marker_side_length = 0.038
+
 def euler_from_quaternion(x, y, z, w):
     
   """
@@ -57,8 +60,6 @@ def findArucoMarkers(img, frame_number, aruco_marker_side_length, markerSize = 6
       calculates it's distance and orientation wrt to camera
     """
 
-    # Please, write the size of the marker here:
-    # aruco_marker_side_length = 0.038
     camera_calibration_parameters_filename = os.path.join(cur_dir, 'calibration_chessboard.yaml')
 
     # Load the camera parameters from the saved file
@@ -75,9 +76,9 @@ def findArucoMarkers(img, frame_number, aruco_marker_side_length, markerSize = 6
     bbox, ids, rejected = aruco.detectMarkers(imgGray, arucoDict, parameters = arucoParam, cameraMatrix=mtx, distCoeff=dst)
     aruco_dists = []
     xyz = []
+    rvecs, tvecs = 0, 0
 
     if draw and ids is not None:
-        aruco.drawDetectedMarkers(img, bbox)
 
         # Get the rotation and translation vectors
         rvecs, tvecs, obj_points = cv2.aruco.estimatePoseSingleMarkers(
@@ -125,10 +126,27 @@ def findArucoMarkers(img, frame_number, aruco_marker_side_length, markerSize = 6
 
             # logger.info(log)
 
+    return [bbox, ids, aruco_dists, xyz], [mtx, dst, rvecs, tvecs]
+
+def drawArUco(img, detection, orientation, draw = True):
+
+    """
+      This function draws bounding boxes and axes on detected
+      ArUco markers
+    """
+
+    bbox = detection[0]
+    ids = detection[1]
+    mtx, dst, rvecs, tvecs = orientation[0], orientation[1], orientation[2], orientation[3]
+    # Draws Bounding box
+    aruco.drawDetectedMarkers(img, bbox)
+
+    if draw and ids is not None:
+
+        for i, id in enumerate(ids):
             # Draw the axes on the marker
             cv2.aruco.drawAxis(img, mtx, dst, rvecs[i], tvecs[i], 0.05)
-
-    return [bbox, ids, aruco_dists, xyz]
+    return None
 
 def arucoIndex(bbox, id, img, drawID = True):
 
@@ -150,7 +168,8 @@ def main():
 
     while True:
         success, img = cap.read()
-        arucoFound = findArucoMarkers(img, frame)
+        arucoFound, vectors = findArucoMarkers(img, frame, aruco_marker_side_length)
+        drawArUco(img, arucoFound, vectors)
 
         if len(arucoFound[0]) != 0:
             for bbox, id in zip(arucoFound[0], arucoFound[1]):
