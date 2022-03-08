@@ -3,6 +3,14 @@ import tensorflow as tf
 import cv2
 import numpy as np
 
+# For now, it's written manually
+intrinsic_matrix = tf.constant([[586.69337515,   0,         307.83631346],
+                                [  0,         624.43501009,  233.78929737],
+                                 [  0,           0,           1        ]])
+
+
+distortion_coeffs = tf.constant([7.86832682e-03,  5.06307790e+00,  1.26011321e-01,  5.76976883e-02,
+  -1.88811379e+01])
 
 def download_model(model_type):
     server_prefix = 'https://omnomnom.vision.rwth-aachen.de/data/metrabs'

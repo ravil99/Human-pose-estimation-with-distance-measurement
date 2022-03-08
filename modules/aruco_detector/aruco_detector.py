@@ -18,7 +18,7 @@ import os
 Log_Format = "%(levelname)s %(asctime)s - %(message)s"
 
 logging.basicConfig(filename = "logfile.log",
-                    filemode = "w",
+                    filemode = "a",
                     format = Log_Format, 
                     level = 20)
 
@@ -123,7 +123,7 @@ def findArucoMarkers(img, frame_number, aruco_marker_side_length, markerSize = 6
                         'pitch_y': str(format(pitch_y)),
                         'yaw_z' : str(format(yaw_z))}
 
-            logger.info(log)
+            # logger.info(log)
 
             # Draw the axes on the marker
             cv2.aruco.drawAxis(img, mtx, dst, rvecs[i], tvecs[i], 0.05)

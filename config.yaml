@@ -9,4 +9,4 @@ depth_estimation:
   enable: True
   show_depth_window: True
 
-aruco_size: 0.038
+aruco_size: 0.094
