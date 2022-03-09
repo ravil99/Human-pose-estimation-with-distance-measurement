@@ -16,3 +16,4 @@ PyYAML
 timm
 mayavi
 pyqt5
+tqdm
