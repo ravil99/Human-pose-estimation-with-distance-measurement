@@ -2,3 +2,4 @@
 __pycache__
 env/
 logfile.log
+stats.log

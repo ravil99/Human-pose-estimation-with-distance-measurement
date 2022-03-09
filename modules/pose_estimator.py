@@ -50,8 +50,6 @@ class PoseEstimator:
                 self.rsho_ind = i
             if 'lsho' in joint:
                 self.lsho_ind = i
-        print('rsho', self.rsho_ind)
-        print('lsho', self.lsho_ind)
 
     def predict(self, rgb_image):
         pred = self.model.detect_poses(

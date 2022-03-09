@@ -1,4 +1,4 @@
-print_fps: False
+print_fps: True
 
 pose_estimation: 
   enable: True
@@ -9,4 +9,7 @@ depth_estimation:
   enable: True
   show_depth_window: True
 
-aruco_size: 0.094
+aruco:
+  real_side_size: 0.094
+  bits_marker_size: 6
+  total_markers: 50
