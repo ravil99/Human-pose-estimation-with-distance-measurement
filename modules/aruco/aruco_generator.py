@@ -1,7 +1,6 @@
 import argparse
 import cv2
 from cv2 import aruco
-import sys
 import os
 
 # construct the argument parser and parse the arguments
@@ -25,8 +24,8 @@ try:
     dict_name = f'DICT_{args.marker_size}X{args.marker_size}_{args.total_markers}'
     aruco_dict = getattr(aruco, dict_name)
 except AttributeError:
-    print(f"There is no {dict_name} in OpenCV")
-    sys.exit(1)
+    print(f"There is no {dict_name} dictionary in ArUco OpenCV module")
+    raise
 
 # load the ArUCo dictionary
 aruco_dict = aruco.Dictionary_get(aruco_dict)
