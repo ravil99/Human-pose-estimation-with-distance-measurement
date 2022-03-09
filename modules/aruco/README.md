@@ -31,6 +31,8 @@
 
 ![](ArUco_markers/ArUCo_example.png)  
 
+## Camera calibration data example 
+![](Calibration_dataset/example_frame.png)
 
 ## ArUco detector example 
 ![](demo.gif)
