@@ -101,22 +101,16 @@ while True:
         except ValueError as e:
             print(e)
             reference_marker = aruco_markers[0]
-        
-        reference_marker_depth = DepthEstimator.get_depth(
-            scaled_disparity_map, reference_marker.center_point)
-        log[f"reference_marker__depth{reference_marker.id}"] = reference_marker_depth
 
         # Calculate distance to each human
         for i, human_point in enumerate(human_points):
-            
-            estimated_dist = DepthEstimator.get_distance(scaled_disparity_map, reference_marker.dist,
+
+            estimated_dist = DepthEstimator.get_distance(disparity_map, reference_marker.dist,
                                                          reference_marker.center_point, human_point.point_2d)
             human_point.estimated_dist = estimated_dist
             cv2.putText(frame, "Dist to human {}: {:.2f}".format(i, estimated_dist), (frame.shape[1] - 300, int((i+1)*20)), cv2.FONT_HERSHEY_PLAIN, 1.5,
                         (255, 255, 0), 2)
             log[f"dist_to_human_{i}"] = estimated_dist
-            log[f"depth_human_{i}"] = DepthEstimator.get_depth(
-                scaled_disparity_map, human_point.point_2d)
 
         # Calculate distance between humans
         num = 2

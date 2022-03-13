@@ -55,7 +55,4 @@ class DepthEstimator:
         max_depth = np.max(disparity_map)
         point1_depth = DepthEstimator.get_depth(disparity_map, point1)
         point2_depth = DepthEstimator.get_depth(disparity_map, point2)
-        print("arUco depth", point1_depth)
-        print("human depth", point2_depth)
-        print("max depth", max_depth)
-        return distance_to_point1 / (max_depth - point1_depth) * (max_depth - point2_depth)
+        return distance_to_point1 * point1_depth / point2_depth
