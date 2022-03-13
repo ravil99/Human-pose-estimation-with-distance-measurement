@@ -20,6 +20,19 @@ def download_model(model_type):
     model_path = os.path.join(os.path.dirname(model_zippath), model_type)
     return model_path
 
+class HumanPoint:
+    def __init__(self, point_2d, point_3d):
+        self.point_2d = point_2d
+        self.point_3d = point_3d
+    
+    def draw(self, frame, id):
+        # Draw the human chest point
+        frame = cv2.circle(frame, self.point_2d, radius=8,
+                            color=(0, 0, 255), thickness=-1)
+        # Put human "ID" near the chest point
+        cv2.putText(frame, str(id), (self.point_2d[0] - 5, self.point_2d[1] - 5),
+                    cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+
 
 class PoseEstimator:
     def __init__(self, skeleton='smpl+head_30', use_poseviz=True):
@@ -62,7 +75,7 @@ class PoseEstimator:
 
         return pred
 
-    def draw2D(self, pred, image):
+    def draw_2d_skeleton(self, pred, image):
         for human in range(len(pred['poses2d'])):
             for i, j in self.model.per_skeleton_joint_edges[self.skeleton]:
                 p1 = tuple(pred['poses2d'][human][i].numpy().astype(int))
@@ -70,7 +83,7 @@ class PoseEstimator:
                 image = cv2.line(image, p1, p2, self.colors[human], 4)
         return image
 
-    def get_chest(self, pred):
+    def get_human_points(self, pred):
         chest_points_2d = []
         for human in range(len(pred['poses2d'])):
             lsho = pred['poses2d'][human][self.lsho_ind].numpy()
@@ -87,4 +100,8 @@ class PoseEstimator:
             chest = (round(chest[0]), round(chest[1]), round(chest[2]))
             chest_points_3d.append(chest)
 
-        return chest_points_2d, chest_points_3d
+        human_points = []
+        for chest_point_2d, chest_point_3d in zip(chest_points_2d, chest_points_3d):
+            human_points.append(HumanPoint(chest_point_2d, chest_point_3d))
+
+        return human_points
