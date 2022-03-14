@@ -1,4 +1,5 @@
 # ArUco markers
+This project can be found as separate repo at [here](https://github.com/4ku/ArUco-markers-python).
 
 * __aruco_generator.py__ - Generate ArUco marker with specific ID in folder `ArUco_markers`.
 
