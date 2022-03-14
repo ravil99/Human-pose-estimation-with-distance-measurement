@@ -41,4 +41,16 @@ Get depth map from single image. Depth estimator based on [MiDaS](https://github
 ## Pose estimation
 Estimates human position in 2D and 3D spaces. Approach was based on [MeTRAbs](https://github.com/isarandi/metrabs) solution. Full documentation is available [here](https://github.com/isarandi/metrabs/tree/master/docs).  
 
-![](img/demo_metrabs.gif)
+![](img/demo_metrabs.gif)  
+
+## Project demo
+Project demo is available on [YouTube](https://youtu.be/4IWl8UEf0FA)  
+
+![](img/human_distance_demo.gif)
+
+## Results
+Estimating distance to the human with only one camera is not so precise. So it would be better to use `multiple` cameras for such problem.  
+
+Below you can see results of some experiment. Video of experiment you can see on [Youtube here](https://youtu.be/PDebTES1UxI). The error depends on the depth estimator, so sometimes it can be significantly wrong.
+
+![](img/Distance_to_human.png)
