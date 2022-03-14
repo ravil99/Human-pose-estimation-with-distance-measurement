@@ -6,14 +6,17 @@ import time
 
 class CustomVideoCapture:
     """
-    Переделанный поток с cv2.VideoCapture, который возвращает всегда самый последний фрейм.
+    Custom videostream handler which based on cv2.VideoCapture. 
+    Always returns the last frame from the stream.
     """
 
     def __init__(self, name):
-        """! Инициализация
-        @param name идентификация потока
-        """
+        """Initialization
 
+        Args:
+            name (string or integer): video stream source. 
+            For more information look cv2.VideoCapture documentation.
+        """
         self.cap = cv2.VideoCapture(name)
         self.name = name
         self.q = queue.Queue()
@@ -42,17 +45,25 @@ class CustomVideoCapture:
         return self.cap.get(num)
 
     def get_size(self):
-        """! Получить размер картинки
+        """Get image size
+
+        Returns:
+            tuple: image size
         """
         return (int(self.get(3)), int(self.get(4)))
 
     def read(self):
-        """! Получить последний кадр"""
+        """Get last frame from stream
+
+        Returns:
+            tuple: (success, last frame from stream)
+        """
         try:
             return self.q.get(timeout=0.5)
         except queue.Empty:
             return False, None
 
     def release(self):
-        """! Освободить поток"""
+        """Release stream
+        """
         self.cap.release()

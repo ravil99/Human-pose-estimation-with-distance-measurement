@@ -117,6 +117,18 @@ class ArucoMarker:
         return [xyz, roll_pitch_yaw]
 
     def get_id(aruco_markers, id):
+        """Get ArUco marker with specific ID
+
+        Args:
+            aruco_markers (array): array of ArucoMarker instances
+            id (int): ArUco marker ID
+
+        Raises:
+            ValueError: if there is no ArUco marker with such ID
+
+        Returns:
+            ArucoMarker: ArucoMarker instance
+        """
         for aruco_marker in aruco_markers:
             if aruco_marker.id == id:
                 return aruco_marker

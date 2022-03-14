@@ -3,16 +3,17 @@ import tensorflow as tf
 import cv2
 import numpy as np
 
-# For now, it's written manually
-intrinsic_matrix = tf.constant([[586.69337515,   0,         307.83631346],
-                                [  0,         624.43501009,  233.78929737],
-                                 [  0,           0,           1        ]])
-
-
-distortion_coeffs = tf.constant([7.86832682e-03,  5.06307790e+00,  1.26011321e-01,  5.76976883e-02,
-  -1.88811379e+01])
 
 def download_model(model_type):
+    """Download MeTRAbs model
+
+    Args:
+        model_type (string): Model type. All available models
+        you can find here https://github.com/isarandi/metrabs/blob/master/docs/MODELS.md
+
+    Returns:
+        string: path to the downloaded model
+    """
     server_prefix = 'https://omnomnom.vision.rwth-aachen.de/data/metrabs'
     model_zippath = tf.keras.utils.get_file(
         origin=f'{server_prefix}/{model_type}.zip',
@@ -20,15 +21,31 @@ def download_model(model_type):
     model_path = os.path.join(os.path.dirname(model_zippath), model_type)
     return model_path
 
+
 class HumanPoint:
+    """Points contains coordinates of human chest in 2D and 3D space
+    """
+
     def __init__(self, point_2d, point_3d):
+        """Initalization
+
+        Args:
+            point_2d (tuple): 2D point
+            point_3d (tuple): 3D point
+        """
         self.point_2d = point_2d
         self.point_3d = point_3d
-    
+
     def draw(self, frame, id):
+        """Draw 2D point on the frame
+
+        Args:
+            frame (array): image
+            id (int): human ID
+        """
         # Draw the human chest point
         frame = cv2.circle(frame, self.point_2d, radius=8,
-                            color=(0, 0, 255), thickness=-1)
+                           color=(0, 0, 255), thickness=-1)
         # Put human "ID" near the chest point
         cv2.putText(frame, str(id), (self.point_2d[0] - 5, self.point_2d[1] - 5),
                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
@@ -36,6 +53,16 @@ class HumanPoint:
 
 class PoseEstimator:
     def __init__(self, skeleton='smpl+head_30', use_poseviz=True):
+        """Pose estimator initialization. It based on MeTRAbs work.
+        https://github.com/isarandi/metrabs
+
+        Args:
+            skeleton (str, optional): Skeleton type of predicted model. All available skeleton
+            types you can found here https://github.com/isarandi/metrabs/blob/master/docs/API.md#skeleton-conventions. 
+            Defaults to 'smpl+head_30'.
+            use_poseviz (bool, optional): Use visualization in 3D space.
+            Available here https://github.com/isarandi/poseviz. Defaults to True.
+        """
         model = download_model('metrabs_rn18_y4')
         self.skeleton = skeleton
         self.model = tf.saved_model.load(model)
@@ -48,12 +75,14 @@ class PoseEstimator:
             import poseviz
             self.viz = poseviz.PoseViz(joint_names, joint_edges)
 
+        # Colors used for human drawing in 2D space
         self.colors = []
         for i in range(10):
             color = np.random.choice(range(256), size=3)
             color = (int(color[0]), int(color[1]), int(color[2]))
             self.colors.append(color)
 
+        # Find right and left shoulder index. It's needed to calculate chest point.
         self.rsho_ind = -1
         self.lsho_ind = -1
         joint_names = self.model.per_skeleton_joint_names[self.skeleton].numpy()
@@ -65,6 +94,14 @@ class PoseEstimator:
                 self.lsho_ind = i
 
     def predict(self, rgb_image):
+        """Predict human position
+
+        Args:
+            rgb_image (array): RGB frame
+
+        Returns:
+            dict: dictionary with predicted poses.
+        """
         pred = self.model.detect_poses(
             rgb_image, skeleton=self.skeleton, default_fov_degrees=55, detector_threshold=0.5)
 
@@ -76,6 +113,15 @@ class PoseEstimator:
         return pred
 
     def draw_2d_skeleton(self, pred, image):
+        """Draw predicted human skeleton on the frame.
+
+        Args:
+            pred (array): predicted human positions
+            image (array): frame
+
+        Returns:
+            image: New image with painted skeleton.
+        """
         for human in range(len(pred['poses2d'])):
             for i, j in self.model.per_skeleton_joint_edges[self.skeleton]:
                 p1 = tuple(pred['poses2d'][human][i].numpy().astype(int))
@@ -84,6 +130,14 @@ class PoseEstimator:
         return image
 
     def get_human_points(self, pred):
+        """Get chest human point in 3D and 2D coordinates.
+
+        Args:
+            pred (array): predicted human positions
+
+        Returns:
+            array: array of HumanPoint instances
+        """
         chest_points_2d = []
         for human in range(len(pred['poses2d'])):
             lsho = pred['poses2d'][human][self.lsho_ind].numpy()
