@@ -12,7 +12,7 @@ class DepthEstimator:
 
         Args:
             device (str, optional): Еhe device on which the calculations will take place. 
-            Can be "cpu" or "gpu". Defaults to "cpu".
+            Can be "cpu" or "cuda". Defaults to "cpu".
         """
         # model_type = "DPT_Hybrid" or "DPT_Large" or "MiDaS_small"
         # For more information see https://pytorch.org/hub/intelisl_midas_v2/

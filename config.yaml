@@ -2,7 +2,9 @@ print_fps: True
 
 pose_estimation: 
   enable: True
+  # use poseviz - visualization tool in 3D space
   poseviz: True
+  # Draw skeleton of detected human on 2D image
   draw_2d: True
 
 depth_estimation:
