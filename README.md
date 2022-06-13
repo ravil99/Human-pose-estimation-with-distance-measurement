@@ -2,8 +2,8 @@
 ## Environment setup
 Recomended 
 * Python 3.8
-* GPU with 4Gb memory
-* CUDA 11.3
+* GPU at least with 4Gb memory
+* CUDA 11.7 + cuDNN 8.4.1
 
 Environment setup script:
 ```
