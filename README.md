@@ -1,4 +1,8 @@
 # Human pose estimation with distance measurement relative to ArUco marker.
+##Innopolis University. Computer Vision. Course project. 
+
+## My work was related to ArUco Markers.
+
 ## Environment setup
 Recomended 
 * Python 3.8
